@@ -3,13 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
     <title>Слайдер пользователей</title>
-    
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        .slider-container { width: 80%; overflow: hidden; margin: auto; border: 1px solid #ddd; }
+        .slider-wrapper { display: flex; transition: transform 0.5s ease-in-out; }
+        .card { flex: 0 0 auto; background: #f9f9f9; padding: 10px; margin: 5px; text-align: center; }
+        .card img { max-width: 100%; border-radius: 50%; }
+        .controls { margin-top: 10px; }
+        button { padding: 8px 12px; margin: 5px; border: none; background: #007BFF; color: white; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
 </head>
 <body>
     <h2>Слайдер пользователей</h2>
-    <label for="card-count">Количество карточек: </label>
+    <label for="card-count">Карточек: </label>
     <select id="card-count">
         <option value="1">1</option>
         <option value="2">2</option>
@@ -22,145 +30,83 @@
     <div class="controls">
         <button class="prev">Назад</button>
         <button class="next">Вперед</button>
-        <button class="add">Добавить слайд</button>
+        <button class="add">Добавить</button>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const sliderContainer = document.querySelector(".slider-container");
-            const sliderWrapper = document.querySelector(".slider-wrapper");
-            const prevBtn = document.querySelector(".prev");
-            const nextBtn = document.querySelector(".next");
-            const addBtn = document.querySelector(".add");
-            const cardCountSelect = document.querySelector("#card-count");
-            let users = [];
-            let visibleCards = 3;
-            let currentIndex = 0;
+        document.addEventListener("DOMContentLoaded", async () => {
+            const wrapper = document.querySelector(".slider-wrapper");
+            const prev = document.querySelector(".prev");
+            const next = document.querySelector(".next");
+            const add = document.querySelector(".add");
+            const select = document.querySelector("#card-count");
+            
+            let users = await fetchUsers();
+            let index = 0;
+            let visible = parseInt(select.value, 10);
 
             async function fetchUsers() {
-                try {
-                    const response = await fetch("https://reqres.in/api/users");
-                    const data = await response.json();
-                    users = data.data;
-                    renderSlider();
-                } catch (error) {
-                    console.error("Ошибка загрузки данных", error);
-                }
+                const response = await fetch("https://reqres.in/api/users");
+                const data = await response.json();
+                return data.data;
             }
 
             function renderSlider() {
-                sliderWrapper.innerHTML = "";
-                users.forEach(user => addCard(user));
-                updateSlider();
+                wrapper.innerHTML = users.map(user => createCard(user)).join("");
+                updateTransform();
             }
 
-            function addCard(user) {
-                const card = document.createElement("div");
-                card.classList.add("card");
-                card.innerHTML = `
-                    <img src="${user.avatar}" alt="${user.first_name}">
-                    <h3>${user.first_name} ${user.last_name}</h3>
-                    <p>${user.email}</p>
-                    <button class="remove">Удалить</button>
+            function createCard(user) {
+                return `
+                    <div class="card" style="width:${100 / visible}%">
+                        <img src="${user.avatar}" alt="${user.first_name}">
+                        <h3>${user.first_name} ${user.last_name}</h3>
+                        <p>${user.email}</p>
+                        <button onclick="removeUser(${user.id})">Удалить</button>
+                    </div>
                 `;
-                card.querySelector(".remove").addEventListener("click", () => removeCard(user.id));
-                sliderWrapper.appendChild(card);
             }
 
-            function updateSlider() {
-                const cardWidth = sliderContainer.clientWidth / visibleCards;
-                document.querySelectorAll(".card").forEach(card => {
-                    card.style.width = `${cardWidth}px`;
-                });
-                sliderWrapper.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+            function updateTransform() {
+                wrapper.style.transform = `translateX(-${index * (100 / visible)}%)`;
             }
 
-            function removeCard(id) {
+            window.removeUser = id => {
                 users = users.filter(user => user.id !== id);
                 renderSlider();
-            }
+            };
 
-            prevBtn.addEventListener("click", () => {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateSlider();
+            prev.addEventListener("click", () => {
+                if (index > 0) {
+                    index--;
+                    updateTransform();
                 }
             });
 
-            nextBtn.addEventListener("click", () => {
-                if (currentIndex < users.length - visibleCards) {
-                    currentIndex++;
-                    updateSlider();
+            next.addEventListener("click", () => {
+                if (index < users.length - visible) {
+                    index++;
+                    updateTransform();
                 }
             });
 
-            addBtn.addEventListener("click", () => {
-                const newUser = {
+            add.addEventListener("click", () => {
+                users.push({
                     id: Date.now(),
                     first_name: "Новый",
                     last_name: "Пользователь",
-                    email: "new.user@example.com",
+                    email: "new@example.com",
                     avatar: "https://via.placeholder.com/150"
-                };
-                users.push(newUser);
-                addCard(newUser);
-                updateSlider();
+                });
+                renderSlider();
             });
 
-            cardCountSelect.addEventListener("change", (e) => {
-                visibleCards = parseInt(e.target.value, 10);
-                updateSlider();
+            select.addEventListener("change", event => {
+                visible = parseInt(event.target.value, 10);
+                renderSlider();
             });
 
-            fetchUsers();
+            renderSlider();
         });
     </script>
 </body>
 </html>
-
-<style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        .slider-container {
-            width: 80%;
-            overflow: hidden;
-            margin: auto;
-            border: 1px solid #ddd;
-            position: relative;
-        }
-        .slider-wrapper {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-        .card {
-            flex: 0 0 auto;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 5px;
-            text-align: center;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-        }
-        .card img {
-            max-width: 100%;
-            border-radius: 50%;
-        }
-        .controls {
-            margin-top: 10px;
-        }
-        button {
-            padding: 8px 12px;
-            margin: 5px;
-            border: none;
-            background: #007BFF;
-            color: white;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-    
-</style>
