@@ -1,0 +1,45 @@
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .slider-container {
+            width: 80%;
+            overflow: hidden;
+            margin: auto;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .card {
+            flex: 0 0 auto;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px;
+            text-align: center;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        .card img {
+            max-width: 100%;
+            border-radius: 50%;
+        }
+        .controls {
+            margin-top: 10px;
+        }
+        button {
+            padding: 8px 12px;
+            margin: 5px;
+            border: none;
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    
