@@ -1,4 +1,3 @@
-<script>
 document.addEventListener("DOMContentLoaded", () => {
             const sliderContainer = document.querySelector(".slider-container");
             const sliderWrapper = document.querySelector(".slider-wrapper");
@@ -87,4 +86,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
             fetchUsers();
         });
-</script>
