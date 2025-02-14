@@ -1,12 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>Слайдер</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="index.js"></script>
+    <title>Слайдер пользователей</title>
+    
 </head>
 <body>
-    <div class="slider"></div>
-    <button onclick="prev()">Назад</button>
-    <button onclick="next()">Вперед</button>
+    <h2>Слайдер пользователей</h2>
+    <label for="card-count">Количество карточек: </label>
+    <select id="card-count">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+    </select>
+    <div class="slider-container">
+        <div class="slider-wrapper"></div>
+    </div>
+    <div class="controls">
+        <button class="prev">Назад</button>
+        <button class="next">Вперед</button>
+        <button class="add">Добавить слайд</button>
+    </div>
 </body>
 </html>
