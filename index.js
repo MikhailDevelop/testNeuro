@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const prevBtn = document.querySelector(".prev");
     const nextBtn = document.querySelector(".next");
     const addBtn = document.querySelector(".add");
+    const turn_img = document.querySelector(".turn");
+    const turn_img_2 = document.querySelector(".turn_2");
     const cardCountSelect = document.querySelector("#card-count");
     let users = [];
     let visibleCards = 3;
@@ -28,12 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function addCard(user) {
         const card = document.createElement("div");
-        card.classList.add("card");
+  
         card.innerHTML = `
+          <div class='card'>
             <img src="${user.avatar}" alt="${user.first_name}">
             <h3>${user.first_name} ${user.last_name}</h3>
             <p>${user.email}</p>
             <button class="remove">Удалить</button>
+         </div>
         `;
         card.querySelector(".remove").addEventListener("click", () => removeCard(user.id));
         sliderWrapper.appendChild(card);
@@ -63,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (currentIndex < users.length - visibleCards) {
             currentIndex++;
             updateSlider();
+            
         }
     });
 
@@ -83,6 +88,29 @@ document.addEventListener("DOMContentLoaded", () => {
         visibleCards = parseInt(e.target.value, 10);
         updateSlider();
     });
+
+    turn_img.addEventListener("click", () => {
+        var turn = document.querySelector('.card');
+           turn.style.transform = "rotate(6deg)";
+        
+    })
+
+    turn_img_2.addEventListener("click", () => {
+        var turn_2 = document.querySelector('.card');
+        var turn_2_it = localStorage.getItem('.turn_2');
+
+            if(turn_2_it) {
+                turn_2.style.transform = `rotate(${turn_2_it}45deg)`;
+                localStorage.setItem("turn_2", turn_2);
+                alert('s');
+                console.log(turn_2);
+            }
+
+        localStorage.setItem("turn_2", turn_2);
+        localStorage.getItem("turn_2", turn_2);
+
+        console.log(localStorage.getItem());
+    })
 
     fetchUsers();
 });
